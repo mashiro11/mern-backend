@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const keys = require('../../config/keys')
 const gravatar = require('gravatar')
 
 const User = require('../../models/user.js')
@@ -52,5 +54,42 @@ router.post('/register', (req, res) => {
       })
 })
 
+// @route   POST api/users/request
+// @desc    Login user
+// access   Public
+router.post('/login', (req, res) => {
+  //Email and password received
+  const email = req.body.email
+  const password = req.body.password
 
+  //Find within user collection register with given email
+  User.findOne({ email })
+      .then(user => { //when findOne returns
+        if(!user){ //if no user was found with given email
+          return res.status(404).json({email: 'Incorrect user or password'})
+        }
+        //check if password matches
+        bcrypt.compare(password, user.password)
+              .then(isMatch => {
+                if(isMatch){
+                  //User matched
+                  const payload = { id: user.id, name: user.name, avatar: user.avatar}
+                  jwt.sign(
+                    payload, //information inside token
+                    keys.secretOrKey,
+                    {expiresIn: 3600},
+                    (err, token) => {
+                      res.json({
+                        success: true,
+                        token: 'Bearer ' + token
+                      })
+                    }
+                  )
+                } else {
+                  return res.status(400).json({ password: 'Incorrect user or password'})
+                }
+              })
+              .catch( err => console.log(err) )
+      })
+})
 module.exports = router
