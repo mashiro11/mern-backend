@@ -1,6 +1,7 @@
 //Requires acting like imports or includes
 const express = require('express')
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
 
 const users = require('./routes/api/users')
 const profile = require('./routes/api/profile')
@@ -8,6 +9,10 @@ const posts = require('./routes/api/posts')
 
 //Creates an Express application. The express() function is a top-level function exported by the express module.
 const app = express()
+
+// Allow accessing data from defined sources as javascript object
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 /******************************************************************************/
 //DB CONFIG
 //mongoURI exported, see config/keys.js file
