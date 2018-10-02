@@ -2,6 +2,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const passport = require('passport')
 
 const users = require('./routes/api/users')
 const profile = require('./routes/api/profile')
@@ -39,6 +40,15 @@ console.log('After? Before?')
 // app.get(path, callback [, callback ...])
 // Routes HTTP GET requests to the specified path with the specified callback functions.
 app.get('/', (req, res) => res.send('Hello world'))
+
+//Passportmiddleware
+app.use(passport.initialize())
+
+// Passport CONFIG
+// This require shows that te returning value is yet another function,
+// which receives passport as argument. Just as getAttr().InternalAttr(),
+// we can have the returning function being called.
+require('./config/passport')(passport)
 
 // Use Routes
 // app.use([path,] callback [, callback...])
