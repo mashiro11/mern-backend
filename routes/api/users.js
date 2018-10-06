@@ -7,7 +7,11 @@ const passport = require('passport')
 const keys = require('../../config/keys')
 const gravatar = require('gravatar')
 
-const User = require('../../models/user.js')
+// Load imput validation
+const validateRegisterInput = require('../../validation/register')
+const validateLoginInput = require('../../validation/login')
+
+const User = require('../../models/User')
 // @route   GET api/users/test
 // @desc    Test users route
 // access   Public
@@ -20,11 +24,16 @@ router.get('/test', (req, res) => res.json({msg: "Users Works"}))
 // @desc    Register new User
 // access   Public
 router.post('/register', (req, res) => {
+  const { errors, isValid } = validateRegisterInput(req.body)
+  if(!isValid) {
+    return res.status(400).json(errors)
+  }
   //mongoose function retrieves register with given information
   User.findOne({ email: req.body.email })
       .then(user => { //promise called when findOne returns
         if(user){ //if there is a user, cannot register another
-          return res.status(400).json({email: 'Email already exists'})
+          errors.email = 'Email already exists'
+          return res.status(400).json(errors)
         } else {
           // Gets email avatar if there is one
           const avatar = gravatar.url(req.body.email, {
@@ -59,6 +68,10 @@ router.post('/register', (req, res) => {
 // @desc    Login user
 // access   Public
 router.post('/login', (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body)
+  if(!isValid) {
+    return res.status(400).json(errors)
+  }
   //Email and password received
   const email = req.body.email
   const password = req.body.password
@@ -67,7 +80,8 @@ router.post('/login', (req, res) => {
   User.findOne({ email })
       .then(user => { //when findOne returns
         if(!user){ //if no user was found with given email
-          return res.status(404).json({email: 'Incorrect user or password'})
+          errors.login = 'Incorrect user or password'
+          return res.status(404).json(errors)
         }
         //check if password matches
         bcrypt.compare(password, user.password)
@@ -87,7 +101,8 @@ router.post('/login', (req, res) => {
                     }
                   )
                 } else {
-                  return res.status(400).json({ password: 'Incorrect user or password'})
+                  errors.login = 'Incorrect user or password'
+                  return res.status(400).json(errors)
                 }
               })
               .catch( err => console.log(err) )

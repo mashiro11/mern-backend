@@ -27,9 +27,10 @@ const db = require('./config/keys').mongoURI
 // received a warning passing just connect(db):
 // DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version.
 // To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+console.log(`Check mongoose connection: ${ mongoose.connection.readyState }`)
 mongoose
   .connect(db, { useNewUrlParser: true })
-  .then(() => console.log('MongoDB Connected'))
+  .then(() => console.log(`MongoDB Connected; Connection status: ${mongoose.connection.readyState}`))
   .catch(err => console.log(`MongoDB Connection failed! ${err}`))
 
 // this will appear on console before MongoDB Connected message, because connect
@@ -45,7 +46,7 @@ app.get('/', (req, res) => res.send('Hello world'))
 app.use(passport.initialize())
 
 // Passport CONFIG
-// This require shows that te returning value is yet another function,
+// This require shows that the returning value is yet another function,
 // which receives passport as argument. Just as getAttr().InternalAttr(),
 // we can have the returning function being called.
 require('./config/passport')(passport)
