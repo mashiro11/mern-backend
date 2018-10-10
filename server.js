@@ -8,7 +8,6 @@ const passport = require('passport')//authentication
 const users = require('./routes/api/users')
 const profile = require('./routes/api/profile')
 const posts = require('./routes/api/posts')
-const routes = require('./routes/api/routes')
 
 
 //Creates an Express application. The express() function is a top-level function
@@ -20,7 +19,7 @@ const app = express()
 //Since path defaults to “/”, middleware mounted without a path will be executed for every request to the app.
 //For example, this middleware function will be executed for every request to the app:
 
-//Express now has own bodyparser
+//Express now (v4.16.0 onwards) has body-parser by default
 //app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
