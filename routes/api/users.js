@@ -1,13 +1,16 @@
 const express = require('express')
+//The top-level express object has a Router() method that creates a new router object.
+//Once you’ve created a router object, you can add middleware and HTTP method routes
+//(such as get, put, post, and so on) to it just like an application.
 const router = express.Router()
 
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const passport = require('passport')
+const bcrypt = require('bcryptjs')//password cryptography
+const jwt = require('jsonwebtoken')//after login creates token
+const passport = require('passport')//token authentification method
 const keys = require('../../config/keys')
-const gravatar = require('gravatar')
+const gravatar = require('gravatar')//gets email avatar
 
-// Load imput validation
+// Load input validation
 const validateRegisterInput = require('../../validation/register')
 const validateLoginInput = require('../../validation/login')
 
@@ -18,7 +21,7 @@ const User = require('../../models/User')
 // req: request; res: response
 // when the route api/users/test receive a GET request,
 // it will call the given callback function
-router.get('/test', (req, res) => res.json({msg: "Users Works"}))
+router.get('/test', (req,res) => res.json({success: 'Working'}))
 
 // @route   GET api/users/request
 // @desc    Register new User

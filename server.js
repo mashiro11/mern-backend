@@ -1,19 +1,32 @@
 //Requires acting like imports or includes
-const express = require('express')
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
-const passport = require('passport')
+const express = require('express')//routing
+const mongoose = require('mongoose')//database
+//const bodyParser = require('body-parser')//parse request body
+const passport = require('passport')//authentication
 
+//application specific routing
 const users = require('./routes/api/users')
 const profile = require('./routes/api/profile')
 const posts = require('./routes/api/posts')
+const routes = require('./routes/api/routes')
 
-//Creates an Express application. The express() function is a top-level function exported by the express module.
+
+//Creates an Express application. The express() function is a top-level function
+//exported by the express module.
 const app = express()
 
-// Allow accessing data from defined sources as javascript object
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+//app.use([path,] callback [, callback...])
+//Allow accessing data from defined sources as javascript object
+//Since path defaults to “/”, middleware mounted without a path will be executed for every request to the app.
+//For example, this middleware function will be executed for every request to the app:
+
+//Express now has own bodyparser
+//app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
+//bodyParser: Parse incoming request bodies in a middleware before your handlers,
+//available under the req.body property.
+
 /******************************************************************************/
 //DB CONFIG
 //mongoURI exported, see config/keys.js file
@@ -37,10 +50,12 @@ mongoose
 // is a promise -> asynchronous -> wait response to call then statement
 console.log('After? Before?')
 /******************************************************************************/
+const home = require('./routes/api/home')
+app.use('/', home)
 // app.get(path, um_ou_mais_callbacks_separados_por_virgula)
 // app.get(path, callback [, callback ...])
 // Routes HTTP GET requests to the specified path with the specified callback functions.
-app.get('/', (req, res) => res.send('Hello world'))
+
 
 //Passportmiddleware
 app.use(passport.initialize())
@@ -55,10 +70,18 @@ require('./config/passport')(passport)
 // app.use([path,] callback [, callback...])
 // Mounts the specified middleware function or functions at the specified path:
 // the middleware function is executed when the base of the requested path matches path.
+const apiRoutes = {
+  routes: '/routes',
+  users: '/api/users',
+  profile: '/api/profile',
+  posts: '/api/posts'
+}
+app.get('/routes', (req, res) => res.json(apiRoutes))
 app.use('/api/users', users)
 app.use('/api/profile', profile)
 app.use('/api/posts', posts)
-app.use((req, res) => console.log(`Time: ${Date.now()}`) )
+
+app.use((req, res) => res.json({noroute:`invalid route ${Date.now()}`}) )
 
 // The process object is a global that provides information about, and control over, the current Node.js process.
 // As a global, it is always available to Node.js applications without using require().
