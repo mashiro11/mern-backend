@@ -88,7 +88,7 @@ const port = process.env.PORT || 5000
 // app.listen([port[, host[, backlog]]][, callback])
 // Binds and listens for connections on the specified host and port.
 // This method is identical to Node’s http.Server.listen().
-app.listen(port, () => console.log(`Server running on port ${port}`), () => console.log('Mais um callback na lista'))
+app.listen(port, () => console.log(`Server running on port ${port}`))
 
 // References
 // http://www.luiztools.com.br/post/o-que-e-nodejs-e-outras-5-duvidas-fundamentais/?gclid=EAIaIQobChMI78Gb-qHh3QIVjoORCh0AagB8EAAYASAAEgKdz_D_BwE
